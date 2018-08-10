@@ -9,8 +9,8 @@ Run the `megamap` script and it will produce a map of MegaRAID drive ID to Linux
 
 ## Requirements
 
-* you need the [`megacli`](http://askubuntu.com/questions/488612/how-do-i-install-the-lsi-megacli-in-ubuntu) tool which needs to be run as `root`
-* [Readonly](https://metacpan.org/pod/Readonly) Perl module (debian package `libreadonly-perl`)
+* yum install perl-Data-Dumper perl-Readonly -y
+* storcli64 - From LSI/Avago/Broadcom
 
 ## Usage
 
