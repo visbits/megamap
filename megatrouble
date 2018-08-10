@@ -3,7 +3,7 @@
 echo '```'
 
 echo "### megacli:"
-megacli -pdlist -a0 | egrep 'Slot|^SAS'
+/opt/MegaRAID/storcli/storcli64 -pdlist -a0 | egrep 'Slot|^SAS'
 
 echo ""
 echo "### /dev/disk/by-id:"
