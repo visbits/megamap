@@ -33,11 +33,12 @@ if ( scalar(@maplines) == 0 ) {
 }
 
 my %map;
-
+my %eid;
 foreach my $line (@maplines) {
 	chomp($line);
-	my ( $megaraid_id, $linux_drive, $wwn ) = split( /\t/, $line );
+	my ( $megaraid_eid, $megaraid_id, $linux_drive, $wwn ) = split( /\t/, $line );
 	$map{$linux_drive} = $megaraid_id;
+	$eid{$linux_drive} = $megaraid_eid;
 }
 
 # blink all the drives!
@@ -48,15 +49,16 @@ foreach my $drive (@drives) {
 	}
 	my $megaraid_id;
 	my $megaraid_eid;
-	
-	# We don't know what EID it is... need to support this.
-	$megaraid_eid = 0;
-	
+
 	if ( $drive =~ /^\d+$/ ) {
 		$megaraid_id = $drive;
+		$megaraid_eid = 0;
 	} else {
-		$megaraid_id = $map{$drive}
+		$megaraid_eid = $eid{$drive};
+		$megaraid_id = $map{$drive};
 	}
+
+
 	croak "no mapping for $drive" unless defined $megaraid_id;
 	print "blinking drive $megaraid_id ($drive), ";
 	my $gonogo = $unblink ? "stop" : "-start";
