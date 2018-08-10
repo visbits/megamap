@@ -18,7 +18,7 @@ croak "megacli requires root" if $username ne 'root';
 my $megacli;
 
 unless ($debug) {
-	$megacli = `megacli -pdlist -a0 | egrep 'Slot|^SAS'`;
+	$megacli = `/opt/MegaRAID/storcli/storcli64 -pdlist -a0 | egrep 'Slot|^SAS'`;
 } else {
 	print "# MEGAMAP_DEBUG=$debug\n";
 	$megacli = `cat /tmp/megacli.out`;
