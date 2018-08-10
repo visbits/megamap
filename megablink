@@ -24,7 +24,7 @@ croak "no arguments... please specify which drives to blink" unless scalar @ARGV
 my @drives = @ARGV;
 
 # pull in megamap
-my $megamap = `megamap`;
+my $megamap = `./megamap`;
 my @maplines = split /\n/, $megamap;
 
 if ( scalar(@maplines) == 0 ) {
@@ -47,6 +47,11 @@ foreach my $drive (@drives) {
 		croak "invalid drive spec '$drive', try sdc or 13";
 	}
 	my $megaraid_id;
+	my $megaraid_eid;
+	
+	# We don't know what EID it is... need to support this.
+	$megaraid_eid = 0;
+	
 	if ( $drive =~ /^\d+$/ ) {
 		$megaraid_id = $drive;
 	} else {
@@ -55,7 +60,7 @@ foreach my $drive (@drives) {
 	croak "no mapping for $drive" unless defined $megaraid_id;
 	print "blinking drive $megaraid_id ($drive), ";
 	my $gonogo = $unblink ? "stop" : "-start";
-	my $cmd = "/opt/MegaRAID/storcli/storcli64 -PdLocate $gonogo -physdrv[0:$megaraid_id] -a0";
+	my $cmd = "/opt/MegaRAID/storcli/storcli64 -PdLocate $gonogo -physdrv[$megaraid_eid:$megaraid_id] -a0";
 	print "running $cmd\n";
 	system($cmd);
 }
