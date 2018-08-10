@@ -18,7 +18,7 @@ croak "megacli requires root" if $username ne 'root';
 my $megacli;
 
 unless ($debug) {
-	$megacli = `/opt/MegaRAID/storcli/storcli64 -pdlist -a0 | egrep 'Slot|^SAS'`;
+	$megacli = `/opt/MegaRAID/storcli/storcli64 -pdlist -a0 | egrep 'Enclosure Device ID|Slot|^SAS'`;
 } else {
 	print "# MEGAMAP_DEBUG=$debug\n";
 	$megacli = `cat /tmp/megacli.out`;
@@ -30,10 +30,14 @@ if ( scalar(@megalines) == 0 ) {
 	warn "No output from megacli\n";
 	exit 2;
 }
-
+my $eid;
 my $slot;
 my %slot_map;
 foreach my $line (@megalines) {
+	if ( $line =~ /^Enclosure[ ]Device[ ]ID/x ){
+		$line =~  s/.* //;
+		$eid = $line;
+	}
 	if ( $line =~ /^Slot[ ]Number/x ) {
 		$line =~ s/.* //;
 		$slot = $line;
@@ -81,6 +85,5 @@ foreach my $line (@megalines) {
 foreach my $slot ( sort { $a <=> $b } keys %slot_map ) {
 	my $dev         = $slot_map{$slot}->{dev};
 	my $linux_drive = $slot_map{$slot}->{linux} || '???';
-	print "$slot\t$dev\t$linux_drive\n";
+	print "$eid\t$slot\t$dev\t$linux_drive\n";
 }
-
