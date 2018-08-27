@@ -1,4 +1,5 @@
-#This file will generate the ceph osd creation commands automatically with journals being disk 1, 15, 29, 43.  Disk 1 is smaller than the others.
+#!/bin/bash
+# This file will generate the ceph osd creation commands automatically with journals being disk 1, 15, 29, 43.  Disk 1 is smaller than the others.
 ../megamap
 map=/tmp/megamap.out
 for i in `cat $map | awk {'print $3'} |uniq -u`
