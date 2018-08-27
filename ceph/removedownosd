@@ -1,0 +1,9 @@
+#!/bin/bash
+#This script will remove from ceph, crush and auth any OSD that is "DOWN"
+
+for i in `ceph osd tree down | awk {' print $1'}  | grep -v "-" | grep -v "ID"`
+do
+	ceph auth del osd.$i
+	ceph osd rm osd.$i
+	ceph osd crush rm osd.$i
+done
