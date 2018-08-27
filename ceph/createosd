@@ -1,0 +1,39 @@
+#This file will generate the ceph osd creation commands automatically with journals being disk 1, 15, 29, 43.  Disk 1 is smaller than the others.
+../megamap
+map=/tmp/megamap.out
+for i in `cat $map | awk {'print $3'} |uniq -u`
+do 
+	diskid=`cat $map | grep -w $i | awk {'print $2'}`
+		echo pvcreate /dev/$i;
+		echo vgcreate ceph-disk$diskid /dev/$i		
+	if [ $diskid -eq 1 ] 
+	#Specific to 200G SSD Journal			
+	then 
+		#Journals
+		journalid=$diskid
+		while [ $journalid -lt $[$diskid + 13] ]
+		do
+			journalid=$[$journalid+1]
+			echo lvcreate -L 11GB -n db-disk$journalid ceph-disk$diskid
+		done
+		lastjournaldisk=$diskid
+
+	#Specific to 400G SSD Journal	
+	elif [ $diskid -eq 15 ] || [ $diskid -eq 29 ] || [ $diskid -eq 43 ] 
+		then 
+		#Journals
+		journalid=$diskid
+		while [ $journalid -lt $[$diskid + 13] ]
+		do
+			journalid=$[$journalid+1]
+			echo lvcreate -L 28GB -n db-disk$journalid ceph-disk$diskid
+		done
+		lastjournaldisk=$diskid
+
+
+	else 
+		#Data Disk
+		echo lvcreate -l 100%FREE -n block-disk$diskid ceph-disk$diskid
+		echo ceph-volume lvm create --bluestore --data ceph-disk$diskid/block-disk$diskid --block.db ceph-disk$lastjournaldisk/db-disk$diskid
+	fi 
+done;
