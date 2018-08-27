@@ -1,0 +1,5 @@
+#!/bin/bash
+for i in `../megamap | awk {' print $3 '}`
+do
+  dd if=/dev/zero of=/dev/$i bs=1M count=48
+done
